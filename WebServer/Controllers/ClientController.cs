@@ -61,12 +61,12 @@ namespace WebServer.Controllers
 
         [HttpDelete]
         [Route("RemoveClient")]
-        public async Task<IActionResult> RemoveClient(string ipAddr, int port)
+        public async Task<IActionResult> RemoveClient(string ipAddr, string port)
         {
             try
             {
                 var client = await _dbContext.Clients
-                    .FirstOrDefaultAsync(c => c.IPAddr == ipAddr && c.Port == port);
+                    .FirstOrDefaultAsync(c => c.IPAddr.Equals(ipAddr) && c.Port.Equals(port));
 
                 if (client == null)
                 {

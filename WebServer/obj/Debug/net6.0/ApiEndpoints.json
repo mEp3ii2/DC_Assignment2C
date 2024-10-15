@@ -1,0 +1,49 @@
+[
+  {
+    "ContainingType": "WebServer.Controllers.ClientController",
+    "Method": "GetClients",
+    "RelativePath": "api/Client/GetClients",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebServer.Controllers.ClientController",
+    "Method": "RegisterClient",
+    "RelativePath": "api/Client/RegisterClient",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "client",
+        "Type": "WebServer.Models.Client",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebServer.Controllers.ClientController",
+    "Method": "RemoveClient",
+    "RelativePath": "api/Client/RemoveClient",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ipAddr",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "port",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

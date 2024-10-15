@@ -1,0 +1,49 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\mitch\\source\\repos\\DC_Assignment2C\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1C706733-5141-4049-9045-A0224352C046}|ClientApp\\ClientApp.csproj|c:\\users\\mitch\\source\\repos\\dc_assignment2c\\clientapp\\network.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C706733-5141-4049-9045-A0224352C046}|ClientApp\\ClientApp.csproj|solutionrelative:clientapp\\network.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 25,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Network.cs",
+              "DocumentMoniker": "C:\\Users\\mitch\\source\\repos\\DC_Assignment2C\\ClientApp\\Network.cs",
+              "RelativeDocumentMoniker": "ClientApp\\Network.cs",
+              "ToolTip": "C:\\Users\\mitch\\source\\repos\\DC_Assignment2C\\ClientApp\\Network.cs*",
+              "RelativeToolTip": "ClientApp\\Network.cs*",
+              "ViewState": "AgIAACEAAAAAAAAAAAAowDUAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-15T13:30:01.486Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

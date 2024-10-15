@@ -11,6 +11,8 @@ namespace APIClasses
         public int JobId { get; set; }
         public string Status { get; set; }
         public string Result { get; set; }
+        public string Base64Code { get; set; } 
+        public string Hash { get; set; }
 
     }
 }
