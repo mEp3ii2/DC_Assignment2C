@@ -15,11 +15,6 @@ namespace WebServer.Controllers
             _dbContext = dbContext;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [HttpPost]
         public async Task<IActionResult> RegisterClient([FromBody] Client client)
         {
