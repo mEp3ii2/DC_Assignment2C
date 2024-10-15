@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebServer.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class ClientController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
@@ -16,6 +18,7 @@ namespace WebServer.Controllers
         }
 
         [HttpPost]
+        [Route("RegisterClient")]
         public async Task<IActionResult> RegisterClient([FromBody] Client client)
         {
             if (!ModelState.IsValid)
@@ -35,6 +38,7 @@ namespace WebServer.Controllers
         }
 
         [HttpGet]
+        [Route("GetClients")]
         public async Task<IActionResult> GetClients()
         {
             try
@@ -52,35 +56,11 @@ namespace WebServer.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateJobStatus(int jobId, string status, string assignedClientIP, int assignedClientPort)
-        {
-            try
-            {
-                var job = await _dbContext.Jobs.FirstOrDefaultAsync(j => j.JobId == jobId);
-
-                if (job == null)
-                {
-                    return NotFound("Job not found");
-                }
-
-                job.Status = status;
-                job.AssignedClientIP = assignedClientIP;
-                job.AssignedClientPort = assignedClientPort;
-                job.LastUpdated = DateTime.Now;
-
-                await _dbContext.SaveChangesAsync();
-
-                return Ok("Job status updated successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error: " + ex.Message);
-            }
-        }
+        
 
 
         [HttpDelete]
+        [Route("RemoveClient")]
         public async Task<IActionResult> RemoveClient(string ipAddr, int port)
         {
             try
@@ -104,85 +84,5 @@ namespace WebServer.Controllers
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
-
-        [HttpGet]
-        public async Task<IActionResult> CheckForJobs()
-        {
-            try
-            {
-                var availableJobs = await _dbContext.Jobs
-                    .Where(j => j.Status == "Pending")
-                    .ToListAsync();
-
-                if (availableJobs == null || !availableJobs.Any())
-                {
-                    return NoContent();  // No jobs available
-                }
-
-                return Ok(availableJobs);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                return StatusCode(500, "Internal server error: " + ex.Message);
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SubmitJobResults(int jobId, string result)
-        {
-            try
-            {
-                var job = await _dbContext.Jobs.FirstOrDefaultAsync(j => j.JobId == jobId);
-
-                if (job == null)
-                {
-                    return NotFound("Job not found");
-                }
-
-                job.Status = "Completed";
-                job.Result = result;
-                job.CompletedAt = DateTime.Now;
-                job.LastUpdated = DateTime.Now;
-
-                await _dbContext.SaveChangesAsync();
-
-                return Ok("Job results submitted successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error: " + ex.Message);
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> RegisterJob([FromBody] Job newJob)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Invalid job data");
-            }
-
-            try
-            {
-                newJob.Status = "Pending";
-                newJob.LastUpdated = DateTime.Now;
-
-                await _dbContext.Jobs.AddAsync(newJob);
-                await _dbContext.SaveChangesAsync();
-
-                return Ok("Job registered successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error: " + ex.Message);
-            }
-        }
-
-
-
-
-
-
     }
 }

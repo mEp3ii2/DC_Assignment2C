@@ -13,8 +13,6 @@ namespace WebServer.Data
 
         // DbSet for Clients table
         public DbSet<Client> Clients { get; set; }
-        public DbSet<Job> Jobs { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

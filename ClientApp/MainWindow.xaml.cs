@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace ClientApp
 {
@@ -20,12 +22,30 @@ namespace ClientApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Thread networkThread;
+        private Thread serverThread;
+
+        private Network network;
+        private Server server;
         public MainWindow()
         {
             InitializeComponent();
 
+            
+
+            network = new Network();
+            networkThread = new Thread(new ThreadStart(network.Run));
+            networkThread.IsBackground = true;
+            networkThread.Start();
+
+            server = new Server();
+            serverThread = new Thread(new ThreadStart(server.Run));
+            serverThread.IsBackground = true; // Optional
+            serverThread.Start();
+
             btnSubmit.IsEnabled = false;
 
+            //listner for code 
             codeTxt.TextChanged += JobDetailsChanged;
             JobTileTxt.TextChanged += JobDetailsChanged;
 
@@ -45,5 +65,7 @@ namespace ClientApp
             btnSubmit.IsEnabled=false;
             //do logic here 
         }
+
+        
     }
 }

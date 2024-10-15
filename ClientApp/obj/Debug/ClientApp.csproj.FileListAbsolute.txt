@@ -1,0 +1,16 @@
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\bin\Debug\ClientApp.exe.config
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\bin\Debug\ClientApp.exe
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\bin\Debug\ClientApp.pdb
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\ClientApp.csproj.AssemblyReference.cache
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\ClientApp.csproj.SuggestedBindingRedirects.cache
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\MainWindow.g.cs
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\App.g.cs
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\ClientApp_MarkupCompile.cache
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\ClientApp_MarkupCompile.lref
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\MainWindow.baml
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\ClientApp.g.resources
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\ClientApp.Properties.Resources.resources
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\ClientApp.csproj.GenerateResource.cache
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\ClientApp.csproj.CoreCompileInputs.cache
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\ClientApp.exe
+C:\Users\19126924\Source\Repos\DC_Assignment2C\ClientApp\obj\Debug\ClientApp.pdb
