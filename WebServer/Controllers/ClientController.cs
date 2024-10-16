@@ -29,7 +29,7 @@ namespace WebServer.Controllers
             {
                 await _dbContext.Clients.AddAsync(client);
                 await _dbContext.SaveChangesAsync();
-                return Ok("Client registerd successfully");
+                return Ok(new {ClientID = client.ClientID});
             }
             catch (Exception ex)
             {

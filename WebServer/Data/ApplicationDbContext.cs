@@ -15,6 +15,13 @@ namespace WebServer.Data
         public DbSet<Client> Clients { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Client>()
+                .HasKey(c => c.ClientID);
+
+            modelBuilder.Entity<Client>()
+                .Property(c => c.ClientID)
+                .ValueGeneratedOnAdd(); // This ensures auto-generation
+
             base.OnModelCreating(modelBuilder);
         }
     }

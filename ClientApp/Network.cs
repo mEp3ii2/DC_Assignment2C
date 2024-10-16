@@ -13,16 +13,27 @@ using System.Security.Cryptography;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 
+
 namespace ClientApp
 {
     
     public class Network
     {
         private int currentClientId;
-
         private volatile bool shutdown = false;
+        private Client currClient;
+        
+
+        public Network(Client client)
+        {
+            this.currClient = client;
+        
+        }
+
+        
         public async Task Run()
         {
+            await registerForJobs(currClient);
             await Loop();
         }
 
@@ -43,10 +54,48 @@ namespace ClientApp
                         }
                     }
                 }
-                Thread.Sleep(1000);
+                Thread.Sleep(4000);
             }
         }
+
+        private async Task registerForJobs(Client currClient)
+        {
+            try
+            {
+                RestClient client = new RestClient("http://localhost:5013");
+                RestRequest request = new RestRequest("api/Client/RegisterClient", Method.Post);
+                request.AddJsonBody(currClient);
+
+                var response = await client.ExecuteAsync<Dictionary<string, int>>(request);
+
+                if (response.IsSuccessful && response.Content != null)
+                {
+                    // Manually deserialize the content
+                    var responseData = JsonConvert.DeserializeObject<Dictionary<string, int>>(response.Content);
+
+                    if (responseData.ContainsKey("clientID"))
+                    {
+                        currentClientId = responseData["clientID"];
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to get ClientID in response");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to register client: {response.ErrorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+        }
+
         
+
         public void ShutDown()
         {
             shutdown = true;
@@ -57,7 +106,7 @@ namespace ClientApp
             try
             {
                 RestClient client = new RestClient("http://localhost:5013");
-                RestRequest request = new RestRequest("api/GetClients", Method.Get);
+                RestRequest request = new RestRequest("api/Client/GetClients", Method.Get);
                 var response = await client.ExecuteAsync<List<Client>>(request);
 
                 if (response.IsSuccessful)
@@ -80,44 +129,37 @@ namespace ClientApp
         {
             try
             {
-                using(TcpClient tcpClient = new TcpClient())
+                // Create the URL for the remote job service
+                string url = $"tcp://{client.IPAddr}:{client.Port}/JobService";
+                Console.WriteLine($"Attempting to connect to client {client.ClientID} at {url}");
+                IJobService jobService = (IJobService)Activator.GetObject(typeof(IJobService), url);
+
+                // Request a job from the client
+                Job job = jobService.GetJob();
+
+                if (job != null)
                 {
-                    tcpClient.Connect(client.IPAddr, int.Parse(client.Port));
-
-                    NetworkStream stream = tcpClient.GetStream();
-
-                    byte[] requestBytes = Encoding.UTF8.GetBytes("GET_JOB");
-                    stream.Write(requestBytes, 0, requestBytes.Length);
-
-                    byte[] responseBytes = new byte[4096];
-                    int bytesRead = stream.Read(responseBytes, 0, responseBytes.Length);
-                    string response = Encoding.UTF8.GetString(responseBytes,0,bytesRead);
-
-                    if(response == "NO_JOB")
+                    // Verify job details (hash, etc.)
+                    bool isValid = VerifyHash(job.Base64Code, job.Hash);
+                    if (!isValid)
                     {
+                        Console.WriteLine("Hash verification failed. Discarding job.");
                         return null;
                     }
-                    else
-                    {
-                        Job job = JsonConvert.DeserializeObject<Job>(response);
 
-                        // Verify the hash
-                        bool isValid = VerifyHash(job.Base64Code, job.Hash);
-                        if (!isValid)
-                        {
-                            Console.WriteLine("Hash verification failed. Discarding job.");
-                            return null;
-                        }
-
-                        return job;
-                    }
+                    return job;
+                }
+                else
+                {
+                    Console.WriteLine("No jobs available.");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error connecting to client {client.ClientID}: {ex.Message}");
-                return null;
             }
+
+            return null;
         }
 
         private bool VerifyHash(string base64Code, string expectedHash)
@@ -140,8 +182,10 @@ namespace ClientApp
                 ScriptEngine engine = Python.CreateEngine();
                 ScriptScope scope = engine.CreateScope();
                 engine.Execute(code, scope);
-                dynamic result = scope.GetVariable("result");
-                return result.ToString();
+                dynamic jobeCodeFunction = scope.GetVariable("jobCode");
+                dynamic result = jobeCodeFunction();
+                
+                return result != null ? result.ToString() : null;
 
             }
             catch (Exception ex)
@@ -154,7 +198,20 @@ namespace ClientApp
 
         private void PostJobResult(Client client, int jobId, string result)
         {
+            try
+            {
+                // Create the URL for the remote job service
+                string url = $"tcp://{client.IPAddr}:{client.Port}/JobService";
+                IJobService jobService = (IJobService)Activator.GetObject(typeof(IJobService), url);
+                // Submit the solution to the remote client
+                jobService.SubmitSolution(jobId, result);
 
+                Console.WriteLine($"Successfully submitted result for Job ID {jobId} to client {client.ClientID}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error posting job result to client {client.ClientID}: {ex.Message}");
+            }
         }
     } 
 }

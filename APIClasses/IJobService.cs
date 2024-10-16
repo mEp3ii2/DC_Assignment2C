@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using APIClasses;
 
-namespace WebServer
+namespace APIClasses
 {
     [ServiceContract]
     public interface IJobService
     {
         [OperationContract]
-        List<int> GetAvailableJobIds();
-
+        Job GetJob(); // Get an available job
+        
         [OperationContract]
-        Job GetJob(int jobId);
-
-        [OperationContract]
-        bool SubmitJobResult(JobResult result);
+        void SubmitSolution(int jobId, string result); // Submit a solution for a specific job
     }
 }

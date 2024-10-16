@@ -7,20 +7,55 @@ using System.Threading;
 using APIClasses;
 using System.Security.Cryptography;
 using System.ServiceModel;
-using WebServer;
+using System.Runtime.Remoting.Channels.Tcp;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting;
 
 namespace ClientApp
 {
     [ServiceBehavior(InstanceContextMode =InstanceContextMode.Single)]
-    public class Server: IJobService
+    public class Server: MarshalByRefObject, IJobService
     {
         private volatile bool shutdown = false;
+        private Client currClient;
+        private List<Job> availableJobs = new List<Job>();
+        private Dictionary<int, string> jobResults = new Dictionary<int, string>();
+
+        public Server(Client client)
+        {
+            this.currClient = client;
+        }
         public void Run()
         {
-            while (!shutdown)
+            try
             {
-                Console.WriteLine("Server Thread running");
-                Thread.Sleep(1000);
+                // Initialize and register the TCP channel
+                TcpChannel channel = new TcpChannel(currClient.Port);
+                ChannelServices.RegisterChannel(channel, false);
+
+                // Register this server as a remote object
+                RemotingConfiguration.RegisterWellKnownServiceType(
+                    typeof(Server),               // The type of the object
+                    "JobService",                 // The name for the object
+                    WellKnownObjectMode.Singleton // Singleton: one instance for all clients
+                );
+
+                Console.WriteLine($"Server is running on {currClient.IPAddr}:{currClient.Port}");
+
+                // Server main loop
+                while (!shutdown)
+                {
+                    Console.WriteLine("Server Thread running, waiting for jobs...");
+                    Task.Delay(3000);
+                }
+
+                // Shutdown the service when needed
+                ChannelServices.UnregisterChannel(channel);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error starting server: {ex.Message}");
+                ShutDown();
             }
         }
 
@@ -29,39 +64,27 @@ namespace ClientApp
             shutdown = true;
         }
 
-        public void AddJob(Job job)
+        public Job GetJob()
         {
-            // Base64-encode the code
-            byte[] codeBytes = Encoding.UTF8.GetBytes(job.Base64Code); // Original code
-            string base64Code = Convert.ToBase64String(codeBytes);
-            job.Base64Code = base64Code;
-
-            // Compute SHA256 hash of the Base64-encoded code
-            using (SHA256 sha256 = SHA256.Create())
+            lock (availableJobs)
             {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(base64Code));
-                job.Hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-            }
-
-            lock (jobQueue)
-            {
-                jobQueue.Add(job);
+                if (availableJobs.Count > 0)
+                {
+                    var job = availableJobs[0];
+                    availableJobs.RemoveAt(0);
+                    return job;
+                }
+                return null;
             }
         }
 
-        List<int> IJobService.GetAvailableJobIds()
+        public void SubmitSolution(int Jobid, string result)
         {
-            throw new NotImplementedException();
+            lock (jobResults)
+            {
+                jobResults[Jobid] = result;
+            }
         }
-
-        Job IJobService.GetJob(int jobId)
-        {
-            throw new NotImplementedException();
-        }
-
-        bool IJobService.SubmitJobResult(JobResult result)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

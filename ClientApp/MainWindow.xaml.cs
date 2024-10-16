@@ -14,6 +14,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
 using System.Windows.Forms;
+using APIClasses;
+using System.Net.Sockets;
+using System.Net;
+using RestSharp;
 
 namespace ClientApp
 {
@@ -27,21 +31,23 @@ namespace ClientApp
 
         private Network network;
         private Server server;
+        Client currClient;
         public MainWindow()
         {
             InitializeComponent();
 
+            currClient = setUpClient();
+            this.Closing += MainWindowClosing;
+
+            server = new Server(currClient);
+            Task.Run(() => server.Run());
+
+            network = new Network(currClient);
+            Task.Run(() => network.Run());
             
 
-            network = new Network();
-            networkThread = new Thread(new ThreadStart(network.Run));
-            networkThread.IsBackground = true;
-            networkThread.Start();
-
-            server = new Server();
-            serverThread = new Thread(new ThreadStart(server.Run));
-            serverThread.IsBackground = true; // Optional
-            serverThread.Start();
+            
+            
 
             btnSubmit.IsEnabled = false;
 
@@ -49,6 +55,39 @@ namespace ClientApp
             codeTxt.TextChanged += JobDetailsChanged;
             JobTileTxt.TextChanged += JobDetailsChanged;
 
+        }
+
+        public Client setUpClient()
+        {
+
+            TcpListener listener = new TcpListener(IPAddress.Any, 0);
+            listener.Start();
+            int port = ((IPEndPoint)listener.LocalEndpoint).Port;
+            //string localIP = GetLocalIPAddress();
+            string localIP = "127.0.0.1";
+
+            Client currClient = new Client
+            {
+                IPAddr = localIP,
+                Port = port,
+                LastUpdated = DateTime.Now
+            };
+
+            CurrentIPAddressLabel.Content = $"IP Address: {localIP}";
+            CurrentPortLabel.Content = $"Port Number: {port}";
+            return currClient;
+        }
+        private string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
         private void JobDetailsChanged(object sender, EventArgs e)
@@ -66,6 +105,35 @@ namespace ClientApp
             //do logic here 
         }
 
-        
+        private void MainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            
+            network.ShutDown();
+            server.ShutDown();
+
+            try
+            {
+                // Assuming RestClient is set up to interact with the WebServer
+                RestClient client = new RestClient("http://localhost:5013");
+                var request = new RestRequest("api/Client/RemoveClient", Method.Delete);
+                request.AddParameter("ipAddr", currClient.ClientID);
+                request.AddParameter("port",currClient.Port);
+
+                var response = client.Execute(request);
+
+                if (response.IsSuccessful)
+                {
+                    Console.WriteLine("Client removed successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Failed to remove client.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during shutdown: {ex.Message}");
+            }
+        }
     }
 }
