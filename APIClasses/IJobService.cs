@@ -13,5 +13,10 @@ namespace APIClasses
         
         [OperationContract]
         void SubmitSolution(int jobId, string result); // Submit a solution for a specific job
+
+
+        [OperationContract]
+        void AddJob(Job job);
+
     }
 }

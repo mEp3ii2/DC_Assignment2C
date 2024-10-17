@@ -12,6 +12,7 @@
         <Button x:Name="btnSubmit"  Content="Submit Job" HorizontalAlignment="Left" Margin="10,433,0,0" VerticalAlignment="Top" Height="32" Width="78" Click="btnSubmit_Click" />
         <DataGrid x:Name="JobBoardTbl" HorizontalAlignment="Left" Margin="412,38,0,223" Width="376" AutoGenerateColumns="False">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding JobId}"/>
                 <DataGridTextColumn Header="Job Name" Binding="{Binding JobName}"/>
                 <DataGridTextColumn Header="Job Status" Binding="{Binding Status}"/>
                 <DataGridTextColumn Header="Result" Binding="{Binding Result}"/>

@@ -1,31 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 
-namespace APIClasses
+[Serializable]
+public class Job : INotifyPropertyChanged
 {
-    [DataContract]
-    public class Job
+    private string status;
+    private string result;
+
+    public int JobId { get; set; }
+    public string JobName { get; set; }
+    public string Base64Code { get; set; }
+    public string Hash { get; set; }
+
+    public string Status
     {
-        [DataMember]
-        public int JobId { get; set; }
+        get { return status; }
+        set
+        {
+            if (status != value)
+            {
+                status = value;
+                OnPropertyChanged("Status");
+            }
+        }
+    }
 
-        [DataMember]
-        public string JobName { get; set; }
-        [DataMember] 
-        public string Status { get; set; }
-        
-        [DataMember] 
-        public string Result { get; set; }
-        
-        [DataMember] 
-        public string Base64Code { get; set; }
-        
-        [DataMember] 
-        public string Hash { get; set; }
+    public string Result
+    {
+        get { return result; }
+        set
+        {
+            if (result != value)
+            {
+                result = value;
+                OnPropertyChanged("Result");
+            }
+        }
+    }
 
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

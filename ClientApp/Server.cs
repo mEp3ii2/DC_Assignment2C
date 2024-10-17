@@ -10,17 +10,20 @@ using System.ServiceModel;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting;
+using System.Windows;
 
 namespace ClientApp
 {
-    [ServiceBehavior(InstanceContextMode =InstanceContextMode.Single)]
+    [ServiceBehavior(InstanceContextMode =InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class Server: MarshalByRefObject, IJobService
     {
         private volatile bool shutdown = false;
         private Client currClient;
-        public List<Job> availableJobs = new List<Job>();
+        public static Queue<Job> availableJobs = new Queue<Job>();
         private Dictionary<int, string> jobResults = new Dictionary<int, string>();
-
+        private readonly Guid instanceId = Guid.NewGuid();
+        
+       
         public Server(){}
         public Server(Client client)
         {
@@ -40,10 +43,10 @@ namespace ClientApp
 
                 // Register this server as a remote object
                 RemotingConfiguration.RegisterWellKnownServiceType(
-                    typeof(Server),               
-                    "JobService",                 
-                    WellKnownObjectMode.Singleton 
-                );
+                    typeof(Server),
+                    "JobService",
+                    WellKnownObjectMode.SingleCall // Change from Singleton to PerCall
+                 );
 
                 Console.WriteLine($"Server is running on {currClient.IPAddr}:{currClient.Port}");
 
@@ -75,14 +78,21 @@ namespace ClientApp
 
         public Job GetJob()
         {
-            
+            Console.WriteLine($"Server Unique ID: {instanceId}");
+            Console.WriteLine($"ty Current job count: {availableJobs.Count}");
             lock (availableJobs)
             {
                 if (availableJobs.Count > 0)
                 {
                     Console.WriteLine("Job Availiable serving job");
-                    var job = availableJobs[0];
-                    availableJobs.RemoveAt(0);
+                    Job job = availableJobs.Dequeue();
+
+
+                
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        MainWindow.Instance.updateJobBoard(job.JobId, "Processing", null);
+                    });
                     return job;
                 }
 
@@ -93,18 +103,21 @@ namespace ClientApp
 
         public void SubmitSolution(int Jobid, string result)
         {
-            lock (jobResults)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                jobResults[Jobid] = result;
-            }
+                MainWindow.Instance.updateJobBoard(Jobid, "Completed",result);
+            });
         }
 
         public void AddJob(Job newJob)
         {
+            Console.WriteLine($"{currClient.IPAddr}:{currClient.Port} with the id of {instanceId} adding a new job to its job board");
             lock (availableJobs)
             {
-                availableJobs.Add(newJob);
-                Console.WriteLine($"Server {currClient.ClientID} has added new job");
+                availableJobs.Enqueue(newJob);
+                //availableJobs.Append(newJob);
+                Console.WriteLine($"{currClient.IPAddr}:{currClient.Port} with the id of {instanceId} has added a new job to its job board");
+                Console.WriteLine($"Current job count: {availableJobs.Count}");
             }
         }
         

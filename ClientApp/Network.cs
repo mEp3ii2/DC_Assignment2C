@@ -137,11 +137,13 @@ namespace ClientApp
                 IJobService jobService = (IJobService)Activator.GetObject(typeof(IJobService), url);
 
                 Console.WriteLine($"{currentClientId}Asking for job from {client.ClientID}");
+                Console.WriteLine($"{currClient.IPAddr}:{currClient.Port} requesting for job from {client.IPAddr}:{client.Port}");
                 // Request a job from the client
                 Job job = jobService.GetJob();
 
                 if (job != null)
                 {
+
                     Console.WriteLine($"Job found from client {client.ClientID}");
                     // Verify job details (hash, etc.)
                     bool isValid = VerifyHash(job.Base64Code, job.Hash);
@@ -168,15 +170,41 @@ namespace ClientApp
 
         private bool VerifyHash(string base64Code, string expectedHash)
         {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] codeBytes = Encoding.UTF8.GetBytes(base64Code);
-                byte[] hashBytes = sha256.ComputeHash(codeBytes);
-                string computedHash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+            Console.WriteLine("Starting hash verification...");
+            Console.WriteLine($"Received base64Code: {base64Code}");
+            Console.WriteLine($"Expected hash: {expectedHash}");
 
-                return computedHash == expectedHash.ToLowerInvariant();
+            try
+            {
+                // Convert the base64Code string into bytes (assuming it's Base64-encoded)
+                byte[] codeBytes = Convert.FromBase64String(base64Code);
+                Console.WriteLine("Base64 code successfully decoded to byte array.");
+
+                // Create the SHA256 hash algorithm instance
+                using (SHA256 sha256 = SHA256.Create())
+                {
+                    // Compute the hash of the byte array
+                    byte[] hashBytes = sha256.ComputeHash(codeBytes);
+                    Console.WriteLine("Hash computed successfully.");
+
+                    // Convert the byte array hash into a hexadecimal string
+                    string computedHash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+                    Console.WriteLine($"Computed hash: {computedHash}");
+
+                    // Compare the computed hash to the expected hash
+                    bool hashesMatch = computedHash == expectedHash.ToLowerInvariant();
+                    Console.WriteLine($"Do the hashes match? {hashesMatch}");
+
+                    return hashesMatch;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during hash verification: {ex.Message}");
+                return false;
             }
         }
+
         private string ExecuteJob(Job job)
         {
             try

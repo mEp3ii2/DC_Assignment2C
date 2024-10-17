@@ -28,6 +28,7 @@ namespace ClientApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        
         private Thread networkThread;
         private Thread serverThread;
 
@@ -35,11 +36,13 @@ namespace ClientApp
         private Server server;
         Client currClient;
 
+        public static MainWindow Instance { get; private set; }
+
         public ObservableCollection<Job> jobsList { get; set; }
         public MainWindow()
         {
             InitializeComponent();
-            
+            Instance = this;
             currClient = setUpClient();
             this.Closing += MainWindowClosing;
 
@@ -50,7 +53,7 @@ namespace ClientApp
 
             server = new Server(currClient);
             Task.Run(() => server.Run());
-
+            
 
             jobsList = new ObservableCollection<Job>();
             JobBoardTbl.ItemsSource = jobsList;
@@ -174,10 +177,41 @@ namespace ClientApp
                 Console.WriteLine($"Error during shutdown: {ex.Message}");
             }
         }
-
-        private void updateJobBoard()
+       
+        public void updateJobBoard(int jobId, string newStatus, string newResult)
         {
+            // Find the job in the ObservableCollection by JobId
+            Job jobToUpdate = jobsList.FirstOrDefault(job => job.JobId == jobId);
 
+            if (jobToUpdate != null)
+            {
+                // Only update Status if a new value is provided
+                if (!string.IsNullOrEmpty(newStatus))
+                {
+                    jobToUpdate.Status = newStatus;
+                }
+
+                // Only update Result if a new value is provided
+                if (!string.IsNullOrEmpty(newResult))
+                {
+                    jobToUpdate.Result = newResult;
+                }
+
+                Console.WriteLine($"Job {jobId} updated with Status: {jobToUpdate.Status} and Result: {jobToUpdate.Result}");
+            }
+            else
+            {
+                Console.WriteLine($"Job with ID {jobId} not found.");
+            }
         }
+
+        private void OnJobTaken(int jobId, string newStatus, string newResult)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                updateJobBoard(jobId, newStatus, newResult);
+            });
+        }
+
     }
 }
