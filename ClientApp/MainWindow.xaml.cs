@@ -75,6 +75,7 @@ namespace ClientApp
 
             CurrentIPAddressLabel.Content = $"IP Address: {localIP}";
             CurrentPortLabel.Content = $"Port Number: {port}";
+            listener.Stop();
             return currClient;
         }
         private string GetLocalIPAddress()

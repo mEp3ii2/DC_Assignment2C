@@ -21,6 +21,7 @@ namespace ClientApp
         private List<Job> availableJobs = new List<Job>();
         private Dictionary<int, string> jobResults = new Dictionary<int, string>();
 
+        public Server(){}
         public Server(Client client)
         {
             this.currClient = client;
@@ -29,6 +30,10 @@ namespace ClientApp
         {
             try
             {
+                if(ChannelServices.GetChannel("JobService")!= null)
+                {
+                    ChannelServices.UnregisterChannel(ChannelServices.GetChannel("JobService"));
+                }
                 // Initialize and register the TCP channel
                 TcpChannel channel = new TcpChannel(currClient.Port);
                 ChannelServices.RegisterChannel(channel, false);
@@ -46,11 +51,15 @@ namespace ClientApp
                 while (!shutdown)
                 {
                     Console.WriteLine("Server Thread running, waiting for jobs...");
-                    Task.Delay(3000);
+                    Task.Delay(5000).Wait();
                 }
 
                 // Shutdown the service when needed
-                ChannelServices.UnregisterChannel(channel);
+                Console.WriteLine("Shutting down the server...");
+                if (ChannelServices.GetChannel("JobService") != null)
+                {
+                    ChannelServices.UnregisterChannel(channel);
+                }
             }
             catch (Exception ex)
             {

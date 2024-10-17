@@ -18,16 +18,28 @@
       "DocumentGroups": [
         {
           "DockedWidth": 25,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Server.cs",
               "DocumentMoniker": "C:\\Users\\mitch\\source\\repos\\DC_Assignment2C\\ClientApp\\Server.cs",
               "RelativeDocumentMoniker": "ClientApp\\Server.cs",
-              "ToolTip": "C:\\Users\\mitch\\source\\repos\\DC_Assignment2C\\ClientApp\\Server.cs",
-              "RelativeToolTip": "ClientApp\\Server.cs",
+              "ToolTip": "C:\\Users\\mitch\\source\\repos\\DC_Assignment2C\\ClientApp\\Server.cs*",
+              "RelativeToolTip": "ClientApp\\Server.cs*",
               "ViewState": "AgIAAD4AAAAAAAAAAAAwwBcAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-17T04:01:04.136Z",
