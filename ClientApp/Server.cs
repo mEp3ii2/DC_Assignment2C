@@ -18,7 +18,7 @@ namespace ClientApp
     {
         private volatile bool shutdown = false;
         private Client currClient;
-        private List<Job> availableJobs = new List<Job>();
+        public List<Job> availableJobs = new List<Job>();
         private Dictionary<int, string> jobResults = new Dictionary<int, string>();
 
         public Server(){}
@@ -40,9 +40,9 @@ namespace ClientApp
 
                 // Register this server as a remote object
                 RemotingConfiguration.RegisterWellKnownServiceType(
-                    typeof(Server),               // The type of the object
-                    "JobService",                 // The name for the object
-                    WellKnownObjectMode.Singleton // Singleton: one instance for all clients
+                    typeof(Server),               
+                    "JobService",                 
+                    WellKnownObjectMode.Singleton 
                 );
 
                 Console.WriteLine($"Server is running on {currClient.IPAddr}:{currClient.Port}");
@@ -50,7 +50,7 @@ namespace ClientApp
                 // Server main loop
                 while (!shutdown)
                 {
-                    Console.WriteLine("Server Thread running, waiting for jobs...");
+                    Console.WriteLine("Server Thread running, hosting jobs");
                     Task.Delay(5000).Wait();
                 }
 
@@ -75,14 +75,18 @@ namespace ClientApp
 
         public Job GetJob()
         {
+            
             lock (availableJobs)
             {
                 if (availableJobs.Count > 0)
                 {
+                    Console.WriteLine("Job Availiable serving job");
                     var job = availableJobs[0];
                     availableJobs.RemoveAt(0);
                     return job;
                 }
+
+                Console.WriteLine("No jobs availiable to serve");
                 return null;
             }
         }
@@ -92,6 +96,15 @@ namespace ClientApp
             lock (jobResults)
             {
                 jobResults[Jobid] = result;
+            }
+        }
+
+        public void AddJob(Job newJob)
+        {
+            lock (availableJobs)
+            {
+                availableJobs.Add(newJob);
+                Console.WriteLine($"Server {currClient.ClientID} has added new job");
             }
         }
         

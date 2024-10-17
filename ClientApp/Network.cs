@@ -33,6 +33,8 @@ namespace ClientApp
         
         public async Task Run()
         {
+            Console.WriteLine("Pausing to give time for the server to start");
+            Task.Delay(4000).Wait();
             await registerForJobs(currClient);
             await Loop();
         }
@@ -54,7 +56,7 @@ namespace ClientApp
                         }
                     }
                 }
-                Thread.Sleep(4000);
+                Task.Delay(10000).Wait();
             }
         }
 
@@ -134,11 +136,13 @@ namespace ClientApp
                 Console.WriteLine($"Attempting to connect to client {client.ClientID} at {url}");
                 IJobService jobService = (IJobService)Activator.GetObject(typeof(IJobService), url);
 
+                Console.WriteLine($"{currentClientId}Asking for job from {client.ClientID}");
                 // Request a job from the client
                 Job job = jobService.GetJob();
 
                 if (job != null)
                 {
+                    Console.WriteLine($"Job found from client {client.ClientID}");
                     // Verify job details (hash, etc.)
                     bool isValid = VerifyHash(job.Base64Code, job.Hash);
                     if (!isValid)
@@ -151,7 +155,7 @@ namespace ClientApp
                 }
                 else
                 {
-                    Console.WriteLine("No jobs available.");
+                    Console.WriteLine($"No jobs available from {client.ClientID}");
                 }
             }
             catch (Exception ex)

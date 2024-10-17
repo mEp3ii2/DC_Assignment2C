@@ -18,6 +18,8 @@ using APIClasses;
 using System.Net.Sockets;
 using System.Net;
 using RestSharp;
+using System.Security.Cryptography;
+using System.Collections.ObjectModel;
 
 namespace ClientApp
 {
@@ -32,22 +34,29 @@ namespace ClientApp
         private Network network;
         private Server server;
         Client currClient;
+
+        public ObservableCollection<Job> jobsList { get; set; }
         public MainWindow()
         {
             InitializeComponent();
-
+            
             currClient = setUpClient();
             this.Closing += MainWindowClosing;
+
+           
+
+            network = new Network(currClient);
+            Task.Run(() => network.Run());
 
             server = new Server(currClient);
             Task.Run(() => server.Run());
 
-            network = new Network(currClient);
-            Task.Run(() => network.Run());
-            
 
-            
-            
+            jobsList = new ObservableCollection<Job>();
+            JobBoardTbl.ItemsSource = jobsList;
+
+
+
 
             btnSubmit.IsEnabled = false;
 
@@ -78,6 +87,11 @@ namespace ClientApp
             listener.Stop();
             return currClient;
         }
+
+        /*
+         * Currently not used as not sure if curtin device lets me use other addess
+         * Defualting to localhost
+         */
         private string GetLocalIPAddress()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());
@@ -91,19 +105,43 @@ namespace ClientApp
             throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
+        /*
+         * Enables the submit job button if text is detected in the code and name txt boxes
+         */
         private void JobDetailsChanged(object sender, EventArgs e)
         {
             btnSubmit.IsEnabled = !string.IsNullOrWhiteSpace(codeTxt.Text) && !string.IsNullOrWhiteSpace(JobTileTxt.Text); 
         }
 
+
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
             String codeText = codeTxt.Text.ToString();
             String JobTitleText = JobTileTxt.Text.ToString();
+
             codeTxt.Clear();
             JobTileTxt.Clear();
             btnSubmit.IsEnabled=false;
-            //do logic here 
+
+            string base64Code = Convert.ToBase64String(Encoding.UTF8.GetBytes(codeText));
+            using(SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] hashBytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(codeText));
+                string hash = BitConverter.ToString(hashBytes).Replace("-","").ToLower();
+
+                Job job = new Job
+                {
+                    JobName = JobTitleText,
+                    Status = "Pending",
+                    Result = null,
+                    Base64Code = base64Code,
+                    Hash = hash
+                };
+
+                jobsList.Add(job);
+                server.AddJob(job);
+                
+            }
         }
 
         private void MainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -135,6 +173,11 @@ namespace ClientApp
             {
                 Console.WriteLine($"Error during shutdown: {ex.Message}");
             }
+        }
+
+        private void updateJobBoard()
+        {
+
         }
     }
 }

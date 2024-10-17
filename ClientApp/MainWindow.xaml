@@ -10,7 +10,7 @@
         <TextBox x:Name="codeTxt"  AcceptsReturn="True" AcceptsTab="True" HorizontalAlignment="Left" Height="323" Margin="10,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="390"/>
         <Label Content="Python Code" HorizontalAlignment="Left" Margin="10,7,0,0" VerticalAlignment="Top"/>
         <Button x:Name="btnSubmit"  Content="Submit Job" HorizontalAlignment="Left" Margin="10,433,0,0" VerticalAlignment="Top" Height="32" Width="78" Click="btnSubmit_Click" />
-        <DataGrid x:Name="JobBoardTbl" HorizontalAlignment="Left" Margin="412,38,0,223" Width="376">
+        <DataGrid x:Name="JobBoardTbl" HorizontalAlignment="Left" Margin="412,38,0,223" Width="376" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Job Name" Binding="{Binding JobName}"/>
                 <DataGridTextColumn Header="Job Status" Binding="{Binding Status}"/>

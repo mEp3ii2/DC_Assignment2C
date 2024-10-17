@@ -12,7 +12,9 @@ namespace APIClasses
     {
         [DataMember]
         public int JobId { get; set; }
-        
+
+        [DataMember]
+        public string JobName { get; set; }
         [DataMember] 
         public string Status { get; set; }
         

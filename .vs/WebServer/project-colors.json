@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "1c706733-5141-4049-9045-a0224352c046": {
+      "ProjectGuid": "1c706733-5141-4049-9045-a0224352c046",
+      "DisplayName": "ClientApp",
+      "ColorIndex": 0
+    },
+    "897a809f-38d0-4d77-b9cf-d9e2ac6c817d": {
+      "ProjectGuid": "897a809f-38d0-4d77-b9cf-d9e2ac6c817d",
+      "DisplayName": "APIClasses",
+      "ColorIndex": 1
+    },
+    "ec4e4c25-73f2-418c-a6af-204bd5f29dc1": {
+      "ProjectGuid": "ec4e4c25-73f2-418c-a6af-204bd5f29dc1",
+      "DisplayName": "WebServer",
+      "ColorIndex": 2
+    }
+  },
+  "NextColorIndex": 3
+}
