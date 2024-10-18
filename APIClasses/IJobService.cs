@@ -9,10 +9,10 @@ namespace APIClasses
     public interface IJobService
     {
         [OperationContract]
-        Job GetJob(); // Get an available job
+        Job GetJob(); 
         
         [OperationContract]
-        void SubmitSolution(int jobId, string result); // Submit a solution for a specific job
+        void SubmitSolution(int jobId, string result); 
 
 
         [OperationContract]

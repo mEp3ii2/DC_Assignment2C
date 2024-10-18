@@ -62,16 +62,10 @@ namespace ClientApp
             server = new Server(currClient,status);
             Task.Run(() => server.Run());
             
-
             jobsList = new ObservableCollection<Job>();
             JobBoardTbl.ItemsSource = jobsList;
 
-
-
-
             btnSubmit.IsEnabled = false;
-
-            //listner for code 
             codeTxt.TextChanged += JobDetailsChanged;
             JobTileTxt.TextChanged += JobDetailsChanged;
 
@@ -83,8 +77,8 @@ namespace ClientApp
             TcpListener listener = new TcpListener(IPAddress.Any, 0);
             listener.Start();
             int port = ((IPEndPoint)listener.LocalEndpoint).Port;
-            //string localIP = GetLocalIPAddress();
-            string localIP = "127.0.0.1";
+            string localIP = GetLocalIPAddress();
+            //string localIP = "127.0.0.1";
 
             Client currClient = new Client
             {
@@ -116,9 +110,7 @@ namespace ClientApp
             throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
-        /*
-         * Enables the submit job button if text is detected in the code and name txt boxes
-         */
+        
         private void JobDetailsChanged(object sender, EventArgs e)
         {
             btnSubmit.IsEnabled = !string.IsNullOrWhiteSpace(codeTxt.Text) && !string.IsNullOrWhiteSpace(JobTileTxt.Text); 
@@ -164,7 +156,7 @@ namespace ClientApp
 
             try
             {
-                // Assuming RestClient is set up to interact with the WebServer
+                
                 RestClient client = new RestClient("http://localhost:5013");
                 var request = new RestRequest("api/Client/RemoveClient", Method.Delete);
                 request.AddParameter("ipAddr", currClient.IPAddr);
@@ -189,18 +181,18 @@ namespace ClientApp
        
         public void updateJobBoard(int jobId, string newStatus, string newResult)
         {
-            // Find the job in the ObservableCollection by JobId
+            
             Job jobToUpdate = jobsList.FirstOrDefault(job => job.JobId == jobId);
 
             if (jobToUpdate != null)
             {
-                // Only update Status if a new value is provided
+            
                 if (!string.IsNullOrEmpty(newStatus))
                 {
                     jobToUpdate.Status = newStatus;
                 }
 
-                // Only update Result if a new value is provided
+            
                 if (!string.IsNullOrEmpty(newResult))
                 {
                     jobToUpdate.Result = newResult;

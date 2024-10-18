@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebServer.Models;  // Adjust this to match your actual namespace
+using WebServer.Models;  
 
 
 namespace WebServer.Data
@@ -20,7 +20,7 @@ namespace WebServer.Data
 
             modelBuilder.Entity<Client>()
                 .Property(c => c.ClientID)
-                .ValueGeneratedOnAdd(); // This ensures auto-generation
+                .ValueGeneratedOnAdd(); 
 
             base.OnModelCreating(modelBuilder);
         }

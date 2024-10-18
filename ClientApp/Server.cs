@@ -40,27 +40,27 @@ namespace ClientApp
                 {
                     ChannelServices.UnregisterChannel(ChannelServices.GetChannel("JobService"));
                 }
-                // Initialize and register the TCP channel
+                
                 TcpChannel channel = new TcpChannel(currClient.Port);
                 ChannelServices.RegisterChannel(channel, false);
 
-                // Register this server as a remote object
+                
                 RemotingConfiguration.RegisterWellKnownServiceType(
                     typeof(Server),
                     "JobService",
-                    WellKnownObjectMode.SingleCall // Change from Singleton to PerCall
+                    WellKnownObjectMode.SingleCall 
                  );
 
                 Console.WriteLine($"Server is running on {currClient.IPAddr}:{currClient.Port}");
 
-                // Server main loop
+                
                 while (!shutdown)
                 {
                     Console.WriteLine("Server Thread running, hosting jobs");
                     Task.Delay(5000).Wait();
                 }
 
-                // Shutdown the service when needed
+                
                 Console.WriteLine("Shutting down the server...");
                 if (ChannelServices.GetChannel("JobService") != null)
                 {
@@ -131,7 +131,6 @@ namespace ClientApp
             lock (availableJobs)
             {
                 availableJobs.Enqueue(newJob);
-                //availableJobs.Append(newJob);
                 Console.WriteLine($"{currClient.IPAddr}:{currClient.Port} with the id of {instanceId} has added a new job to its job board");
                 Console.WriteLine($"Current job count: {availableJobs.Count}");
                 status.jobsPosted++;

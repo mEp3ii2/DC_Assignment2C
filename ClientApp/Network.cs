@@ -88,14 +88,12 @@ namespace ClientApp
                 request.AddJsonBody(status);
                 RestResponse response = await client.ExecuteAsync(request);
 
-                // Check the status of the response
                 if (response.IsSuccessful)
                 {
                     Console.WriteLine("Client status updated successfully.");
                 }
                 else
-                {
-                    // Handle the failure case (logging, throwing exception, etc.)
+                {                    
                     Console.WriteLine($"Failed to update client status. Status Code: {response.StatusCode}, Error: {response.ErrorMessage}");
                 }
             }
@@ -116,7 +114,7 @@ namespace ClientApp
 
                 if (response.IsSuccessful && response.Content != null)
                 {
-                    // Manually deserialize the content
+                    
                     var responseData = JsonConvert.DeserializeObject<Dictionary<string, int>>(response.Content);
 
                     if (responseData.ContainsKey("clientID"))
@@ -176,21 +174,18 @@ namespace ClientApp
         {
             try
             {
-                // Create the URL for the remote job service
                 string url = $"tcp://{client.IPAddr}:{client.Port}/JobService";
                 Console.WriteLine($"Attempting to connect to client {client.ClientID} at {url}");
                 IJobService jobService = (IJobService)Activator.GetObject(typeof(IJobService), url);
 
                 Console.WriteLine($"{currentClientId}Asking for job from {client.ClientID}");
                 Console.WriteLine($"{currClient.IPAddr}:{currClient.Port} requesting for job from {client.IPAddr}:{client.Port}");
-                // Request a job from the client
                 Job job = jobService.GetJob();
 
                 if (job != null)
                 {
 
                     Console.WriteLine($"Job found from client {client.ClientID}");
-                    // Verify job details (hash, etc.)
                     bool isValid = VerifyHash(job.Base64Code, job.Hash);
                     if (!isValid)
                     {
@@ -225,15 +220,10 @@ namespace ClientApp
 
                 using (SHA256 sha256 = SHA256.Create())
                 {
-                    // Compute the hash of the Base64-encoded string (without decoding it to byte array)
                     byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(base64Code));
                     Console.WriteLine("Hash computed successfully.");
-
-                    // Convert the byte array hash into a hexadecimal string
                     string computedHash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
                     Console.WriteLine($"Computed hash: {computedHash}");
-
-                    // Compare the computed hash to the expected hash
                     bool hashesMatch = computedHash == expectedHash.ToLowerInvariant();
                     Console.WriteLine($"Do the hashes match? {hashesMatch}");
 
@@ -274,12 +264,9 @@ namespace ClientApp
         {
             try
             {
-                // Create the URL for the remote job service
                 string url = $"tcp://{client.IPAddr}:{client.Port}/JobService";
                 IJobService jobService = (IJobService)Activator.GetObject(typeof(IJobService), url);
-                // Submit the solution to the remote client
                 jobService.SubmitSolution(jobId, result);
-
                 Console.WriteLine($"Successfully submitted result for Job ID {jobId} to client {client.ClientID}");
             }
             catch (Exception ex)

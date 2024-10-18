@@ -6,7 +6,7 @@ namespace WebServer.Services
     public class ClientCleanUpService : BackgroundService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly TimeSpan _timeoutPeriod = TimeSpan.FromSeconds(30); // Set the timeout period
+        private readonly TimeSpan _timeoutPeriod = TimeSpan.FromSeconds(30); 
         private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(5);
 
         public ClientCleanUpService(IServiceScopeFactory serviceScopeFactory)
@@ -22,12 +22,12 @@ namespace WebServer.Services
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                    // Calculate the timeout threshold (DateTime to compare against LastUpdated)
+                  
                     var timeoutThreshold = DateTime.UtcNow.Add(-_timeoutPeriod);
 
-                    // Perform the filtering on the database side (server-side)
+                  
                     var inactiveClients = await dbContext.Clients
-                        .Where(c => c.LastUpdated < timeoutThreshold)  // Server-side comparison
+                        .Where(c => c.LastUpdated < timeoutThreshold)  
                         .ToListAsync();
 
                     if (inactiveClients.Any())
@@ -38,7 +38,7 @@ namespace WebServer.Services
                     }
                 }
 
-                await Task.Delay(_checkInterval, stoppingToken);  // Wait for the next check
+                await Task.Delay(_checkInterval, stoppingToken);  
             }
         }
 
