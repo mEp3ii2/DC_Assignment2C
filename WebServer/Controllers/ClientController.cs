@@ -27,13 +27,14 @@ namespace WebServer.Controllers
             }
             try
             {
+                client.LastUpdated = DateTime.Now;
                 await _dbContext.Clients.AddAsync(client);
                 await _dbContext.SaveChangesAsync();
-                return Ok(new {ClientID = client.ClientID});
+                return Ok(new { ClientID = client.ClientID });
             }
             catch (Exception ex)
             {
-                return StatusCode(500,"Internal server error: "+ex.Message);
+                return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
 
@@ -44,7 +45,7 @@ namespace WebServer.Controllers
             try
             {
                 var clients = await _dbContext.Clients.ToListAsync();
-                if(clients == null || !clients.Any())
+                if (clients == null || !clients.Any())
                 {
                     return NoContent();
                 }
@@ -56,7 +57,7 @@ namespace WebServer.Controllers
             }
         }
 
-        
+
 
 
         [HttpDelete]
@@ -83,6 +84,37 @@ namespace WebServer.Controllers
                 // Log the exception
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
+        }
+
+        [HttpPost]
+        [Route("UpdateActivity")]
+        public async Task<IActionResult> UpdateActivity(int clientId)
+        {
+            try
+            {
+                var client = await _dbContext.Clients.FirstOrDefaultAsync(c => c.ClientID == clientId);
+                if (client == null)
+                {
+                    return NotFound("Client Not Found");
+                }
+
+                client.LastUpdated = DateTime.Now;
+                _dbContext.Clients.Update(client);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Intenal server error: " + ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("LoadClients")]
+        public async IActionResult LoadClients()
+        {
+
         }
     }
 }

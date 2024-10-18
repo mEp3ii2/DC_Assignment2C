@@ -4,6 +4,7 @@ using System.ComponentModel;
 [Serializable]
 public class Job : INotifyPropertyChanged
 {
+    private static int nextJobId = 1;
     private string status;
     private string result;
 
@@ -12,6 +13,10 @@ public class Job : INotifyPropertyChanged
     public string Base64Code { get; set; }
     public string Hash { get; set; }
 
+    public Job()
+    {
+        JobId = nextJobId++;
+    }
     public string Status
     {
         get { return status; }
@@ -38,6 +43,7 @@ public class Job : INotifyPropertyChanged
         }
     }
 
+    [field:NonSerialized]
     public event PropertyChangedEventHandler PropertyChanged;
 
     protected void OnPropertyChanged(string propertyName)

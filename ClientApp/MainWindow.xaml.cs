@@ -35,7 +35,7 @@ namespace ClientApp
         private Network network;
         private Server server;
         Client currClient;
-
+        private static CurrentStatus status;
         public static MainWindow Instance { get; private set; }
 
         public ObservableCollection<Job> jobsList { get; set; }
@@ -46,12 +46,20 @@ namespace ClientApp
             currClient = setUpClient();
             this.Closing += MainWindowClosing;
 
-           
+            status = new CurrentStatus
+            {
+                ClientID = currClient.ClientID,
+                IPAddr = currClient.IPAddr,
+                Port = currClient.Port,
+                jobsPosted = 0,
+                jobCompleted = 0,
+                LastUpdated = currClient.LastUpdated
+            };
 
-            network = new Network(currClient);
+            network = new Network(currClient,status);
             Task.Run(() => network.Run());
 
-            server = new Server(currClient);
+            server = new Server(currClient,status);
             Task.Run(() => server.Run());
             
 
@@ -127,9 +135,10 @@ namespace ClientApp
             btnSubmit.IsEnabled=false;
 
             string base64Code = Convert.ToBase64String(Encoding.UTF8.GetBytes(codeText));
+
             using(SHA256 sha256Hash = SHA256.Create())
             {
-                byte[] hashBytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(codeText));
+                byte[] hashBytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(base64Code));
                 string hash = BitConverter.ToString(hashBytes).Replace("-","").ToLower();
 
                 Job job = new Job
@@ -205,13 +214,14 @@ namespace ClientApp
             }
         }
 
-        private void OnJobTaken(int jobId, string newStatus, string newResult)
+        public void updateWorkStatus(string currentStatus)
         {
-            Dispatcher.Invoke(() =>
-            {
-                updateJobBoard(jobId, newStatus, newResult);
-            });
+            CurrentStatusLabel.Content = "Current Status: " + currentStatus;
         }
 
+        public void updateJobCount(int jobCount)
+        {
+            CompletedJobsLabel.Content = "Completed Jobs: "+jobCount.ToString();
+        }
     }
 }

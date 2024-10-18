@@ -20,14 +20,15 @@ namespace ClientApp
         private volatile bool shutdown = false;
         private Client currClient;
         public static Queue<Job> availableJobs = new Queue<Job>();
-        private Dictionary<int, string> jobResults = new Dictionary<int, string>();
+        public static Dictionary<int, Job> heldJobs = new Dictionary<int, Job>();
         private readonly Guid instanceId = Guid.NewGuid();
-        
+        private CurrentStatus status;
        
         public Server(){}
-        public Server(Client client)
+        public Server(Client client,CurrentStatus status)
         {
             this.currClient = client;
+            this.status = status;
         }
         public void Run()
         {
@@ -86,9 +87,7 @@ namespace ClientApp
                 {
                     Console.WriteLine("Job Availiable serving job");
                     Job job = availableJobs.Dequeue();
-
-
-                
+                    heldJobs[job.JobId] = job;
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         MainWindow.Instance.updateJobBoard(job.JobId, "Processing", null);
@@ -101,6 +100,21 @@ namespace ClientApp
             }
         }
 
+        public void confirmJob(Job job, bool success)
+        {
+            if (heldJobs.ContainsKey(job.JobId))
+            {
+                if (success)
+                {
+                    heldJobs.Remove(job.JobId);
+                }
+                else
+                {
+                    availableJobs.Enqueue(job);
+                    heldJobs.Remove(job.JobId);
+                }
+            }
+        }
         public void SubmitSolution(int Jobid, string result)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -118,8 +132,15 @@ namespace ClientApp
                 //availableJobs.Append(newJob);
                 Console.WriteLine($"{currClient.IPAddr}:{currClient.Port} with the id of {instanceId} has added a new job to its job board");
                 Console.WriteLine($"Current job count: {availableJobs.Count}");
+                status.jobsPosted++;
             }
         }
+
+        public CurrentStatus GetCurrentStatus()
+        {
+            return status;
+        }
+
         
     }
 }

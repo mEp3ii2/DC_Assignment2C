@@ -1,8 +1,125 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swarm Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            margin: 0 auto;
+            max-width: 800px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .refresh-message {
+            text-align: center;
+            font-style: italic;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Swarm Connection Status</h1>
+        <p>Below is the current status of all connected clients in the swarm and their job completion count. This page refreshes every 1 minute.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Client ID</th>
+                    <th>IP Address</th>
+                    <th>Port</th>
+                    <th>Jobs Completed</th>
+                </tr>
+            </thead>
+            <tbody id="clientTableBody">
+            </tbody>
+        </table>
+        <div class="refresh-message" id="refreshMessage">
+            Last updated at: <span id="lastUpdated"></span>
+        </div>
+    </div>
+
+    <script>
+        function loadClientData() {
+            fetch('/api/Client/LoadClients')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('clientTableBody');
+                    tbody.innerHTML = ''; 
+
+                    data.forEach(client => {
+                        const row = document.createElement('tr');
+
+                        
+                        const clientIdCell = document.createElement('td');
+                        clientIdCell.textContent = client.clientId;
+                        row.appendChild(clientIdCell);
+
+                        const ipAddrCell = document.createElement('td');
+                        ipAddrCell.textContent = client.ipAddr;
+                        row.appendChild(ipAddrCell);
+
+                        const portCell = document.createElement('td');
+                        portCell.textContent = client.port;
+                        row.appendChild(portCell);
+
+                        const jobsCompletedCell = document.createElement('td');
+                        jobsCompletedCell.textContent = client.jobsCompleted;
+                        row.appendChild(jobsCompletedCell);
+
+                        
+                        tbody.appendChild(row);
+                    });
+
+                    
+                    const lastUpdated = new Date().toLocaleTimeString();
+                    document.getElementById('lastUpdated').textContent = lastUpdated;
+                })
+                .catch(error => {
+                    console.error('Error fetching client data:', error);
+                });
+        }
+
+        window.onload = function() {
+            loadClientData(); 
+            setInterval(loadClientData, 60000);
+        };
+    </script>
+</body>
+</html>

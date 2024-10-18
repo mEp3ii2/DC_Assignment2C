@@ -18,5 +18,10 @@ namespace APIClasses
         [OperationContract]
         void AddJob(Job job);
 
+        [OperationContract]
+        void confirmJob(Job job,bool success);
+
+        [OperationContract]
+        CurrentStatus GetCurrentStatus();
     }
 }

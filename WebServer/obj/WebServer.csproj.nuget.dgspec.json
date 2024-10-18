@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\19126924\\source\\repos\\DC_Assignment2C\\WebServer\\WebServer.csproj": {}
+    "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\WebServer\\WebServer.csproj": {}
   },
   "projects": {
-    "C:\\Users\\19126924\\source\\repos\\DC_Assignment2C\\WebServer\\WebServer.csproj": {
+    "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\WebServer\\WebServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\19126924\\source\\repos\\DC_Assignment2C\\WebServer\\WebServer.csproj",
+        "projectUniqueName": "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\WebServer\\WebServer.csproj",
         "projectName": "WebServer",
-        "projectPath": "C:\\Users\\19126924\\source\\repos\\DC_Assignment2C\\WebServer\\WebServer.csproj",
+        "projectPath": "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\WebServer\\WebServer.csproj",
         "packagesPath": "C:\\Users\\19126924\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\19126924\\source\\repos\\DC_Assignment2C\\WebServer\\obj\\",
+        "outputPath": "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\WebServer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

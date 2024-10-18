@@ -12,22 +12,23 @@ using Newtonsoft.Json;
 using System.Security.Cryptography;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
-
+using System.Windows;
 
 namespace ClientApp
 {
     
     public class Network
     {
+        private static int jobCount = 0;
         private int currentClientId;
         private volatile bool shutdown = false;
         private Client currClient;
-        
+        private CurrentStatus status;
 
-        public Network(Client client)
+        public Network(Client client, CurrentStatus status)
         {
             this.currClient = client;
-        
+            this.status = status;
         }
 
         
@@ -44,18 +45,36 @@ namespace ClientApp
             while (!shutdown)
             {
                 List<Client> clients = await ClientLookUp();
-                foreach(var client in clients)
+                
+                foreach (var client in clients)
                 {
-                    if(client.ClientID != currentClientId)
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        MainWindow.Instance.updateWorkStatus("SEARCHING");
+                    });
+
+                    if (client.ClientID != currentClientId)
                     {
                         Job job = JobLook(client);
                         if(job!= null)
                         {
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                MainWindow.Instance.updateWorkStatus($"PROCESSING {job.JobName}");
+                            });
                             string result = ExecuteJob(job);
                             PostJobResult(client, job.JobId, result);
+                            jobCount++;
+                            status.jobCompleted++;
+                            
                         }
                     }
                 }
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MainWindow.Instance.updateJobCount(jobCount);
+                    MainWindow.Instance.updateWorkStatus("IDLE");
+                });
                 Task.Delay(10000).Wait();
             }
         }
@@ -78,6 +97,7 @@ namespace ClientApp
                     if (responseData.ContainsKey("clientID"))
                     {
                         currentClientId = responseData["clientID"];
+                        status.ClientID = currentClientId;
                     }
                     else
                     {
@@ -149,10 +169,11 @@ namespace ClientApp
                     bool isValid = VerifyHash(job.Base64Code, job.Hash);
                     if (!isValid)
                     {
+                        jobService.confirmJob(job,false);
                         Console.WriteLine("Hash verification failed. Discarding job.");
                         return null;
                     }
-
+                    jobService.confirmJob(job,true);
                     return job;
                 }
                 else
@@ -176,15 +197,11 @@ namespace ClientApp
 
             try
             {
-                // Convert the base64Code string into bytes (assuming it's Base64-encoded)
-                byte[] codeBytes = Convert.FromBase64String(base64Code);
-                Console.WriteLine("Base64 code successfully decoded to byte array.");
 
-                // Create the SHA256 hash algorithm instance
                 using (SHA256 sha256 = SHA256.Create())
                 {
-                    // Compute the hash of the byte array
-                    byte[] hashBytes = sha256.ComputeHash(codeBytes);
+                    // Compute the hash of the Base64-encoded string (without decoding it to byte array)
+                    byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(base64Code));
                     Console.WriteLine("Hash computed successfully.");
 
                     // Convert the byte array hash into a hexadecimal string
@@ -225,7 +242,7 @@ namespace ClientApp
                 Console.WriteLine("Error executing job: "+ex.Message);
                 
             }
-            return null;
+            return "Invalid Python Code";
         }
 
         private void PostJobResult(Client client, int jobId, string result)
