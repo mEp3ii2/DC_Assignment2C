@@ -4,6 +4,21 @@
     "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\WebServer\\WebServer.csproj": {}
   },
   "projects": {
+    "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\APIClasses\\APIClasses.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\APIClasses\\APIClasses.csproj",
+        "projectName": "APIClasses",
+        "projectPath": "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\APIClasses\\APIClasses.csproj",
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net472": {}
+      }
+    },
     "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\WebServer\\WebServer.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -31,7 +46,11 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\APIClasses\\APIClasses.csproj": {
+                "projectPath": "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\APIClasses\\APIClasses.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

@@ -167,7 +167,7 @@ namespace ClientApp
                 // Assuming RestClient is set up to interact with the WebServer
                 RestClient client = new RestClient("http://localhost:5013");
                 var request = new RestRequest("api/Client/RemoveClient", Method.Delete);
-                request.AddParameter("ipAddr", currClient.ClientID);
+                request.AddParameter("ipAddr", currClient.IPAddr);
                 request.AddParameter("port",currClient.Port);
 
                 var response = client.Execute(request);

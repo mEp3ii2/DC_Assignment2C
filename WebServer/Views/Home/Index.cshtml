@@ -57,14 +57,14 @@
 <body>
     <div class="container">
         <h1>Swarm Connection Status</h1>
-        <p>Below is the current status of all connected clients in the swarm and their job completion count. This page refreshes every 1 minute.</p>
+        <p>Below is the current status of all connected clients in the swarm and their job completion count. This page will refresh automatically.</p>
         <table>
             <thead>
                 <tr>
-                    <th>Client ID</th>
                     <th>IP Address</th>
                     <th>Port</th>
                     <th>Jobs Completed</th>
+                    <th>Jobs Posted</th> 
                 </tr>
             </thead>
             <tbody id="clientTableBody">
@@ -76,50 +76,66 @@
     </div>
 
     <script>
-        function loadClientData() {
-            fetch('/api/Client/LoadClients')
-                .then(response => response.json())
-                .then(data => {
-                    const tbody = document.getElementById('clientTableBody');
-                    tbody.innerHTML = ''; 
+    function loadClientData() {
+        fetch('/api/Client/GetClients')
+            .then(response => {
+                const tbody = document.getElementById('clientTableBody');
+                tbody.innerHTML = ''; 
 
-                    data.forEach(client => {
-                        const row = document.createElement('tr');
+                //no content respose
+                if (response.status === 204) {
+                    const noDataRow = document.createElement('tr');
+                    const noDataCell = document.createElement('td');
+                    noDataCell.setAttribute('colspan', '4'); 
+                    noDataCell.textContent = 'No clients connected.';
+                    noDataRow.appendChild(noDataCell);
+                    tbody.appendChild(noDataRow);
+                    return; 
+                }
 
-                        
-                        const clientIdCell = document.createElement('td');
-                        clientIdCell.textContent = client.clientId;
-                        row.appendChild(clientIdCell);
+                return response.json();
+            })
+            .then(data => {
+                if (!data) return;
 
-                        const ipAddrCell = document.createElement('td');
-                        ipAddrCell.textContent = client.ipAddr;
-                        row.appendChild(ipAddrCell);
+                const tbody = document.getElementById('clientTableBody');
+                tbody.innerHTML = ''; 
 
-                        const portCell = document.createElement('td');
-                        portCell.textContent = client.port;
-                        row.appendChild(portCell);
+                data.forEach(client => {
+                    const row = document.createElement('tr');
 
-                        const jobsCompletedCell = document.createElement('td');
-                        jobsCompletedCell.textContent = client.jobsCompleted;
-                        row.appendChild(jobsCompletedCell);
+                    const ipAddrCell = document.createElement('td');
+                    ipAddrCell.textContent = client.ipAddr;
+                    row.appendChild(ipAddrCell);
 
-                        
-                        tbody.appendChild(row);
-                    });
+                    const portCell = document.createElement('td');
+                    portCell.textContent = client.port;
+                    row.appendChild(portCell);
 
-                    
-                    const lastUpdated = new Date().toLocaleTimeString();
-                    document.getElementById('lastUpdated').textContent = lastUpdated;
-                })
-                .catch(error => {
-                    console.error('Error fetching client data:', error);
+                    const jobsCompletedCell = document.createElement('td');
+                    jobsCompletedCell.textContent = client.jobsCompleted;
+                    row.appendChild(jobsCompletedCell);
+
+                    const jobsPostedCell = document.createElement('td');
+                    jobsPostedCell.textContent = client.jobsPosted;
+                    row.appendChild(jobsPostedCell);
+
+                    tbody.appendChild(row);
                 });
-        }
 
-        window.onload = function() {
-            loadClientData(); 
-            setInterval(loadClientData, 60000);
-        };
-    </script>
+                const lastUpdated = new Date().toLocaleTimeString();
+                document.getElementById('lastUpdated').textContent = lastUpdated;
+            })
+            .catch(error => {
+                console.error('Error fetching client data:', error);
+            });
+    }
+
+    window.onload = function() {
+        loadClientData(); 
+        setInterval(loadClientData, 10000); // Refresh every 10 seconds, doesnt feel like it but
+    };
+</script>
+
 </body>
 </html>

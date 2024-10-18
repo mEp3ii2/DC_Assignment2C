@@ -23,7 +23,8 @@ namespace ClientApp
         public static Dictionary<int, Job> heldJobs = new Dictionary<int, Job>();
         private readonly Guid instanceId = Guid.NewGuid();
         private CurrentStatus status;
-       
+        
+
         public Server(){}
         public Server(Client client,CurrentStatus status)
         {
@@ -32,6 +33,7 @@ namespace ClientApp
         }
         public void Run()
         {
+           
             try
             {
                 if(ChannelServices.GetChannel("JobService")!= null)
@@ -136,6 +138,8 @@ namespace ClientApp
             }
         }
 
+
+        
         public CurrentStatus GetCurrentStatus()
         {
             return status;

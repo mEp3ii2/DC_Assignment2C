@@ -652,6 +652,15 @@
             "rid": "win"
           }
         }
+      },
+      "APIClasses/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/APIClasses.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/APIClasses.dll": {}
+        }
       }
     }
   },
@@ -1927,10 +1936,16 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "APIClasses/1.0.0": {
+      "type": "project",
+      "path": "../APIClasses/APIClasses.csproj",
+      "msbuildProject": "../APIClasses/APIClasses.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "APIClasses >= 1.0.0",
       "Microsoft.EntityFrameworkCore >= 6.0.35",
       "Microsoft.EntityFrameworkCore.SqlServer >= 6.0.0",
       "Microsoft.EntityFrameworkCore.Tools >= 6.0.0",
@@ -1969,7 +1984,11 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\APIClasses\\APIClasses.csproj": {
+              "projectPath": "C:\\Users\\19126924\\Source\\Repos\\DC_Assignment2C\\APIClasses\\APIClasses.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

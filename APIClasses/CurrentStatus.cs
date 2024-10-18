@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace APIClasses
 {
+    
     public class CurrentStatus
     {
         public int ClientID { get; set; }

@@ -12,5 +12,8 @@ namespace WebServer.Models
         public string IPAddr { get; set; }
         public int Port { get; set; }
         public DateTime LastUpdated { get; set; }
+
+        public int JobsCompleted { get; set; }
+        public int JobsPosted { get; set; }
     }
 }

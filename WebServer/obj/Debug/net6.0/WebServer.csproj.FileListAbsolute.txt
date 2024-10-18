@@ -199,3 +199,6 @@ C:\Users\19126924\Source\Repos\DC_Assignment2C\WebServer\obj\Debug\net6.0\WebSer
 C:\Users\19126924\Source\Repos\DC_Assignment2C\WebServer\obj\Debug\net6.0\ref\WebServer.dll
 C:\Users\19126924\Source\Repos\DC_Assignment2C\WebServer\obj\Debug\net6.0\WebServer.pdb
 C:\Users\19126924\Source\Repos\DC_Assignment2C\WebServer\obj\Debug\net6.0\WebServer.genruntimeconfig.cache
+C:\Users\19126924\Source\Repos\DC_Assignment2C\WebServer\bin\Debug\net6.0\APIClasses.dll
+C:\Users\19126924\Source\Repos\DC_Assignment2C\WebServer\bin\Debug\net6.0\APIClasses.pdb
+C:\Users\19126924\Source\Repos\DC_Assignment2C\WebServer\obj\Debug\net6.0\WebServer.csproj.AssemblyReference.cache

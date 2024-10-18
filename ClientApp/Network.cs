@@ -75,10 +75,35 @@ namespace ClientApp
                     MainWindow.Instance.updateJobCount(jobCount);
                     MainWindow.Instance.updateWorkStatus("IDLE");
                 });
+                await updateStatus();
                 Task.Delay(10000).Wait();
             }
         }
+        private async Task updateStatus()
+        {
+            try
+            {
+                RestClient client = new RestClient("http://localhost:5013");
+                RestRequest request = new RestRequest("api/Client/UpdateStatus", Method.Post);
+                request.AddJsonBody(status);
+                RestResponse response = await client.ExecuteAsync(request);
 
+                // Check the status of the response
+                if (response.IsSuccessful)
+                {
+                    Console.WriteLine("Client status updated successfully.");
+                }
+                else
+                {
+                    // Handle the failure case (logging, throwing exception, etc.)
+                    Console.WriteLine($"Failed to update client status. Status Code: {response.StatusCode}, Error: {response.ErrorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in updateStatus: {ex.Message}");
+            }
+        }
         private async Task registerForJobs(Client currClient)
         {
             try
